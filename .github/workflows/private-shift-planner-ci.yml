@@ -1,0 +1,82 @@
+name: Private Shift Planner CI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: private-shift-planner-ci
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out private source
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ secrets.SHIFT_PLANNER_REPO }}
+          ref: ${{ secrets.SHIFT_PLANNER_REF }}
+          token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
+          persist-credentials: false
+          fetch-depth: 1
+          path: source
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run repository suite
+        working-directory: source
+        shell: bash
+        run: |
+          set +x
+          if node tests/test-runner.js > "$RUNNER_TEMP/repository-tests.log" 2>&1; then
+            echo "Repository suite: PASS"
+          else
+            echo "Repository suite: FAIL"
+            exit 1
+          fi
+
+      - name: Run focused V2-1 suite
+        working-directory: source
+        shell: bash
+        run: |
+          set +x
+          if node tests/v2-1-node-runner.js > "$RUNNER_TEMP/v2-1-tests.log" 2>&1; then
+            echo "V2-1 suite: PASS"
+          else
+            echo "V2-1 suite: FAIL"
+            exit 1
+          fi
+
+      - name: Syntax checks
+        working-directory: source
+        shell: bash
+        run: |
+          set +x
+          node --check src/requests/request-domain.js >/dev/null 2>&1
+          node --check src/requests/request-effect-projector.js >/dev/null 2>&1
+          node --check src/workers/worker-registry.js >/dev/null 2>&1
+          node --check tests/v2-1-browser-runner.js >/dev/null 2>&1
+          echo "Syntax: PASS"
+
+      - name: Whitespace check
+        working-directory: source
+        shell: bash
+        run: |
+          set +x
+          git diff --check >/dev/null 2>&1
+          echo "Whitespace: PASS"
+
+      - name: Remove checked-out source
+        if: always()
+        shell: bash
+        run: |
+          rm -rf source
+          rm -f "$RUNNER_TEMP/repository-tests.log" "$RUNNER_TEMP/v2-1-tests.log"

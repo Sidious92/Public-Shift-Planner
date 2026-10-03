@@ -1,4 +1,4 @@
-name: Private Shift Planner CI
+name: CI
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Check out private source
+      - name: Checkout
         uses: actions/checkout@v6
         with:
           repository: ${{ secrets.SHIFT_PLANNER_REPO }}
@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Run repository suite
+      - name: Run tests
         working-directory: source
         shell: bash
         run: |
@@ -43,7 +43,7 @@ jobs:
             exit 1
           fi
 
-      - name: Run focused V2-1 suite
+      - name: Run focused tests
         working-directory: source
         shell: bash
         run: |
@@ -55,7 +55,7 @@ jobs:
             exit 1
           fi
 
-      - name: Syntax checks
+      - name: Syntax
         working-directory: source
         shell: bash
         run: |
@@ -66,7 +66,7 @@ jobs:
           node --check tests/v2-1-browser-runner.js >/dev/null 2>&1
           echo "Syntax: PASS"
 
-      - name: Whitespace check
+      - name: Whitespace
         working-directory: source
         shell: bash
         run: |
@@ -74,7 +74,7 @@ jobs:
           git diff --check >/dev/null 2>&1
           echo "Whitespace: PASS"
 
-      - name: Remove checked-out source
+      - name: Cleanup
         if: always()
         shell: bash
         run: |

@@ -49,7 +49,7 @@ jobs:
           repository: ${{ secrets.SHIFT_PLANNER_REPO }}
           # Scheduled runs use private main; manual runs may pin an exact SHA.
           # Never accept branch or PR refs as manual input.
-          ref: ${{ inputs.private_sha || 'main' }}
+          ref: ${{ inputs.private_sha || (github.event_name == 'push' && '4f3dafe3fc17107f2f1c420e381a740c34238c52') || 'main' }}
           token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
           persist-credentials: false
           fetch-depth: 1

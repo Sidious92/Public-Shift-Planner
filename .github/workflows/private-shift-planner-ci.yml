@@ -32,7 +32,8 @@ jobs:
         with:
           repository: ${{ secrets.SHIFT_PLANNER_REPO }}
           # Canonical private main
-          ref: main
+          # Temporary G5 candidate integrity verification; restore main after review.
+          ref: release/g5-candidate-docs-integrity-20261029
           token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
           persist-credentials: false
           fetch-depth: 1

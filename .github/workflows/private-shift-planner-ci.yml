@@ -1,4 +1,4 @@
-# Trusted CI bridge. Public repo is ONLY a runner; source stays private.
+# Trusted CI bridge (refactor in progress). Public repo is ONLY a runner; source stays private.
 # Important: never add pull_request or untrusted triggers here, as the job
 # uses a private-repository checkout token. Logs are intentionally redacted.
 name: Private Shift Planner CI

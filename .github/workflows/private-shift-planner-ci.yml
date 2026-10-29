@@ -57,11 +57,12 @@ jobs:
           echo "Private checkout and test manifest: PASS"
 
       - name: Run repository suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 001" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-001.log" | head -n 3 || true' ERR
           if node tests/test-runner.js > "$RUNNER_TEMP/shiftplanner-ci-001.log" 2>&1; then
             echo "Repository suite: PASS"
           else
@@ -70,42 +71,47 @@ jobs:
             if ! grep -q '^FAIL ' "$RUNNER_TEMP/shiftplanner-ci-001.log"; then
               echo "::error::Failure before test reporting. Full stack trace withheld."
             fi
+            echo "Check 001" >> "$RUNNER_TEMP/shiftplanner-ci-failures"
             exit 1
           fi
 
       - name: Run focused M4-003 suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 002" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-002.log" | head -n 3 || true' ERR
           node tests/m4-003-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-002.log" 2>&1
           echo "PASS"
 
       - name: Run focused M4-004 suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 003" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-003.log" | head -n 3 || true' ERR
           node tests/m4-004-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-003.log" 2>&1
           echo "PASS"
 
       - name: Check M4-004 browser runner syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 004" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-004.log" | head -n 3 || true' ERR
           node --check tests/m4-004-browser-runner.js > "$RUNNER_TEMP/shiftplanner-ci-004.log" 2>&1
           echo "PASS"
 
       - name: Check V2-1 domain module syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 005" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-005.log" | head -n 3 || true' ERR
           node --check src/requests/request-domain.js > "$RUNNER_TEMP/shiftplanner-ci-005.log" 2>&1
           node --check src/requests/request-effect-projector.js >> "$RUNNER_TEMP/shiftplanner-ci-005.log" 2>&1
           node --check src/requests/request-week-reconciler.js >> "$RUNNER_TEMP/shiftplanner-ci-005.log" 2>&1
@@ -114,47 +120,52 @@ jobs:
           echo "PASS"
 
       - name: Run focused V2-1 domain suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 006" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-006.log" | head -n 3 || true' ERR
           node tests/v2-1-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-006.log" 2>&1
           echo "PASS"
 
       - name: Run request week reconciler suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 007" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-007.log" | head -n 3 || true' ERR
           node tests/request-week-reconciler-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-007.log" 2>&1
           echo "PASS"
 
       - name: Run staff preference evaluator suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 008" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-008.log" | head -n 3 || true' ERR
           node tests/staff-preference-evaluator-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-008.log" 2>&1
           echo "PASS"
 
       - name: Check V2-1 browser runner syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 009" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-009.log" | head -n 3 || true' ERR
           node --check tests/v2-1-browser-runner.js > "$RUNNER_TEMP/shiftplanner-ci-009.log" 2>&1
           echo "PASS"
 
       - name: Check V2-2 storage module syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 010" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-010.log" | head -n 3 || true' ERR
           node --check src/storage/canonical-json.js > "$RUNNER_TEMP/shiftplanner-ci-010.log" 2>&1
           node --check src/storage/sha256.js >> "$RUNNER_TEMP/shiftplanner-ci-010.log" 2>&1
           node --check src/storage/storage-layout.js >> "$RUNNER_TEMP/shiftplanner-ci-010.log" 2>&1
@@ -179,38 +190,42 @@ jobs:
           echo "PASS"
 
       - name: Run focused V2-2 storage suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 011" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-011.log" | head -n 3 || true' ERR
           node tests/v2-2-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-011.log" 2>&1
           echo "PASS"
 
       - name: Run V2-2 application storage suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 012" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-012.log" | head -n 3 || true' ERR
           node tests/v2-2-application-storage-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-012.log" 2>&1
           echo "PASS"
 
       - name: Run operational session suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 013" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-013.log" | head -n 3 || true' ERR
           node tests/operational-session-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-013.log" 2>&1
           echo "PASS"
 
       - name: Check V2-3 workspace syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 014" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-014.log" | head -n 3 || true' ERR
           node --check src/view/workspace-view-model.js > "$RUNNER_TEMP/shiftplanner-ci-014.log" 2>&1
           node --check src/view/workspace-renderer.js >> "$RUNNER_TEMP/shiftplanner-ci-014.log" 2>&1
           node --check src/interaction/assignment-evaluator.js >> "$RUNNER_TEMP/shiftplanner-ci-014.log" 2>&1
@@ -233,74 +248,82 @@ jobs:
           echo "PASS"
 
       - name: Run V2-3 workspace view-model suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 015" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-015.log" | head -n 3 || true' ERR
           node tests/v2-3-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-015.log" 2>&1
           echo "PASS"
 
       - name: Run V2-3 interaction suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 016" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-016.log" | head -n 3 || true' ERR
           node tests/v2-3-interaction-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-016.log" 2>&1
           echo "PASS"
 
       - name: Run V2-3 week mutation suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 017" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-017.log" | head -n 3 || true' ERR
           node tests/v2-3-week-mutation-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-017.log" 2>&1
           echo "PASS"
 
       - name: Run Staff management suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 018" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-018.log" | head -n 3 || true' ERR
           node tests/staff-management-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-018.log" 2>&1
           echo "PASS"
 
       - name: Run Staff requests suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 019" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-019.log" | head -n 3 || true' ERR
           node tests/staff-requests-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-019.log" 2>&1
           echo "PASS"
 
       - name: Check Staff Requests V3 dashboard regression syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 020" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-020.log" | head -n 3 || true' ERR
           node --check tests/staff-requests-v3-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-020.log" 2>&1
           echo "PASS"
 
       - name: Run Staff Requests V3 queue, recurring rules and navigation regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 021" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-021.log" | head -n 3 || true' ERR
           node tests/staff-requests-v3-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-021.log" 2>&1
           echo "PASS"
 
       - name: Check Staff Requests V3.2 preflight and lifecycle syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 022" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-022.log" | head -n 3 || true' ERR
           node --check src/requests/request-conflict-evaluator.js > "$RUNNER_TEMP/shiftplanner-ci-022.log" 2>&1
           node --check src/requests/request-domain.js >> "$RUNNER_TEMP/shiftplanner-ci-022.log" 2>&1
           node --check src/staff/staff-requests-controller.js >> "$RUNNER_TEMP/shiftplanner-ci-022.log" 2>&1
@@ -308,20 +331,22 @@ jobs:
           echo "PASS"
 
       - name: Run Staff Requests V3.2 safe edit, cancel and conflict regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 023" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-023.log" | head -n 3 || true' ERR
           node tests/staff-requests-v3-phase2-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-023.log" 2>&1
           echo "PASS"
 
       - name: Check Staff Requests V3.3 recurring rule lifecycle syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 024" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-024.log" | head -n 3 || true' ERR
           node --check src/requests/request-domain.js > "$RUNNER_TEMP/shiftplanner-ci-024.log" 2>&1
           node --check src/staff/staff-requests-view-model.js >> "$RUNNER_TEMP/shiftplanner-ci-024.log" 2>&1
           node --check src/staff/staff-requests-renderer.js >> "$RUNNER_TEMP/shiftplanner-ci-024.log" 2>&1
@@ -330,20 +355,22 @@ jobs:
           echo "PASS"
 
       - name: Run Staff Requests V3.3 versioning, retirement and generator integration
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 025" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-025.log" | head -n 3 || true' ERR
           node tests/staff-requests-v3-recurring-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-025.log" 2>&1
           echo "PASS"
 
       - name: Check Staff Requests V3.4 cross-week impact syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 026" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-026.log" | head -n 3 || true' ERR
           node --check src/requests/request-week-impact.js > "$RUNNER_TEMP/shiftplanner-ci-026.log" 2>&1
           node --check src/staff/staff-requests-controller.js >> "$RUNNER_TEMP/shiftplanner-ci-026.log" 2>&1
           node --check src/app/staff-operational-app.js >> "$RUNNER_TEMP/shiftplanner-ci-026.log" 2>&1
@@ -352,20 +379,22 @@ jobs:
           echo "PASS"
 
       - name: Run Staff Requests V3.4 read-only cross-week preview
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 027" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-027.log" | head -n 3 || true' ERR
           node tests/staff-requests-v34-week-impact-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-027.log" 2>&1
           echo "PASS"
 
       - name: Check Staff Requests V3.5 assisted multiweek lifecycle syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 028" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-028.log" | head -n 3 || true' ERR
           node --check src/app/request-multiweek-assist.js > "$RUNNER_TEMP/shiftplanner-ci-028.log" 2>&1
           node --check src/staff/staff-requests-controller.js >> "$RUNNER_TEMP/shiftplanner-ci-028.log" 2>&1
           node --check src/app/staff-operational-app.js >> "$RUNNER_TEMP/shiftplanner-ci-028.log" 2>&1
@@ -373,20 +402,22 @@ jobs:
           echo "PASS"
 
       - name: Run Staff Requests V3.5 guarded batch reconciliation
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 029" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-029.log" | head -n 3 || true' ERR
           node tests/staff-requests-v35-assist-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-029.log" 2>&1
           echo "PASS"
 
       - name: Check Staff Requests V3.6 revocation syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 030" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-030.log" | head -n 3 || true' ERR
           node --check src/requests/request-domain.js > "$RUNNER_TEMP/shiftplanner-ci-030.log" 2>&1
           node --check src/app/request-approved-absence-revocation.js >> "$RUNNER_TEMP/shiftplanner-ci-030.log" 2>&1
           node --check src/staff/staff-requests-controller.js >> "$RUNNER_TEMP/shiftplanner-ci-030.log" 2>&1
@@ -395,20 +426,22 @@ jobs:
           echo "PASS"
 
       - name: Run Staff Requests V3.6 approved leave revocation and recovery
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 031" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-031.log" | head -n 3 || true' ERR
           node tests/staff-requests-v36-revocation-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-031.log" 2>&1
           echo "PASS"
 
       - name: Check Staff Requests V3.7 audit and declaration syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 032" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-032.log" | head -n 3 || true' ERR
           node --check src/requests/request-audit.js > "$RUNNER_TEMP/shiftplanner-ci-032.log" 2>&1
           node --check src/app/operational-session.js >> "$RUNNER_TEMP/shiftplanner-ci-032.log" 2>&1
           node --check src/app/staff-operational-app.js >> "$RUNNER_TEMP/shiftplanner-ci-032.log" 2>&1
@@ -417,126 +450,139 @@ jobs:
           echo "PASS"
 
       - name: Run Staff Requests V3.7 verified history and audit warning suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 033" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-033.log" | head -n 3 || true' ERR
           node tests/staff-requests-v37-audit-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-033.log" 2>&1
           echo "PASS"
 
       - name: Check and run managers-only Staff UI regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 034" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-034.log" | head -n 3 || true' ERR
           node --check src/app/staff-operational-app.js > "$RUNNER_TEMP/shiftplanner-ci-034.log" 2>&1
           node --check tests/staff-responsabili-only-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-034.log" 2>&1
           node tests/staff-responsabili-only-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-034.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 holiday allocation syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 035" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-035.log" | head -n 3 || true' ERR
           node --check src/requests/ferie-off-allocation.js > "$RUNNER_TEMP/shiftplanner-ci-035.log" 2>&1
           node --check tests/v2-5-ferie-off-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-035.log" 2>&1
           echo "PASS"
 
       - name: Run V2.5 FERIE/OFF allocation regression suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 036" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-036.log" | head -n 3 || true' ERR
           node tests/v2-5-ferie-off-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-036.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 FERIE/OFF persistence test syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 037" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-037.log" | head -n 3 || true' ERR
           node --check tests/v2-5-ferie-off-persistence-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-037.log" 2>&1
           echo "PASS"
 
       - name: Run V2.5 FERIE/OFF approval audit and revision suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 038" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-038.log" | head -n 3 || true' ERR
           node tests/v2-5-ferie-off-persistence-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-038.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 administrative multi-week module syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 039" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-039.log" | head -n 3 || true' ERR
           node --check src/app/administrative-illness-batch.js > "$RUNNER_TEMP/shiftplanner-ci-039.log" 2>&1
           node --check tests/v2-5-administrative-multiweek-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-039.log" 2>&1
           echo "PASS"
 
       - name: Run V2.5 administrative multi-week regression suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 040" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-040.log" | head -n 3 || true' ERR
           node tests/v2-5-administrative-multiweek-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-040.log" 2>&1
           echo "PASS"
 
       - name: Check administrative illness reversal syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 041" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-041.log" | head -n 3 || true' ERR
           node --check src/app/administrative-illness-reversal.js > "$RUNNER_TEMP/shiftplanner-ci-041.log" 2>&1
           node --check tests/v2-5-administrative-illness-reversal-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-041.log" 2>&1
           node --check src/app/planner-operational-app.js >> "$RUNNER_TEMP/shiftplanner-ci-041.log" 2>&1
           echo "PASS"
 
       - name: Run administrative illness reversal suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 042" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-042.log" | head -n 3 || true' ERR
           node tests/v2-5-administrative-illness-reversal-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-042.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 revision browser syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 043" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-043.log" | head -n 3 || true' ERR
           node --check src/storage/week-revision-browser.js > "$RUNNER_TEMP/shiftplanner-ci-043.log" 2>&1
           node --check tests/v2-5-revision-browser-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-043.log" 2>&1
           echo "PASS"
 
       - name: Run V2.5 revision browser regression suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 044" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-044.log" | head -n 3 || true' ERR
           node tests/v2-5-revision-browser-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-044.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 safe restore syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 045" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-045.log" | head -n 3 || true' ERR
           node --check src/storage/week-revision-restore.js > "$RUNNER_TEMP/shiftplanner-ci-045.log" 2>&1
           node --check tests/v2-5-week-restore-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-045.log" 2>&1
           node --check src/app/planner-operational-app.js >> "$RUNNER_TEMP/shiftplanner-ci-045.log" 2>&1
@@ -544,20 +590,22 @@ jobs:
           echo "PASS"
 
       - name: Run V2.5 safe restore suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 046" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-046.log" | head -n 3 || true' ERR
           node tests/v2-5-week-restore-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-046.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 operational print syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 047" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-047.log" | head -n 3 || true' ERR
           node --check src/app/operational-print-preflight.js > "$RUNNER_TEMP/shiftplanner-ci-047.log" 2>&1
           node --check src/view/operational-print-view-model.js >> "$RUNNER_TEMP/shiftplanner-ci-047.log" 2>&1
           node --check src/app/operational-session.js >> "$RUNNER_TEMP/shiftplanner-ci-047.log" 2>&1
@@ -566,173 +614,191 @@ jobs:
           echo "PASS"
 
       - name: Run V2.5 operational print suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 048" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-048.log" | head -n 3 || true' ERR
           node tests/v2-5-operational-print-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-048.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 premium print syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 049" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-049.log" | head -n 3 || true' ERR
           node --check src/view/operational-print-renderer.js > "$RUNNER_TEMP/shiftplanner-ci-049.log" 2>&1
           node --check src/view/operational-print-view-model.js >> "$RUNNER_TEMP/shiftplanner-ci-049.log" 2>&1
           node --check tests/v2-5-premium-print-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-049.log" 2>&1
           echo "PASS"
 
       - name: Run V2.5 premium print regression suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 050" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-050.log" | head -n 3 || true' ERR
           node tests/v2-5-premium-print-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-050.log" 2>&1
           echo "PASS"
 
       - name: Check full-page PDF preview syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 051" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-051.log" | head -n 3 || true' ERR
           node --check src/app/planner-operational-app.js > "$RUNNER_TEMP/shiftplanner-ci-051.log" 2>&1
           node --check tests/v38-fullscreen-print-preview-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-051.log" 2>&1
           echo "PASS"
 
       - name: Run full-page PDF preview regression suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 052" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-052.log" | head -n 3 || true' ERR
           node tests/v38-fullscreen-print-preview-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-052.log" 2>&1
           echo "PASS"
 
       - name: Run native PDF export regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 053" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-053.log" | head -n 3 || true' ERR
           node --check src/view/planner-pdf-document.js > "$RUNNER_TEMP/shiftplanner-ci-053.log" 2>&1
           node --check tests/v39-native-pdfmake-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-053.log" 2>&1
           node tests/v39-native-pdfmake-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-053.log" 2>&1
           echo "PASS"
 
       - name: Validate original-layout PDF capture module
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 054" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-054.log" | head -n 3 || true' ERR
           node --check src/view/original-print-pdf-service.js > "$RUNNER_TEMP/shiftplanner-ci-054.log" 2>&1
           node --check tests/v310-original-print-pdf-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-054.log" 2>&1
           node tests/v310-original-print-pdf-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-054.log" 2>&1
           echo "PASS"
 
       - name: Check official PLUS / Shift Planner branding syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 055" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-055.log" | head -n 3 || true' ERR
           node --check tests/v2-5-official-logos-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-055.log" 2>&1
           echo "PASS"
 
       - name: Run official PLUS / Shift Planner PNG integration tests
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 056" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-056.log" | head -n 3 || true' ERR
           node tests/v2-5-official-logos-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-056.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 PLUS light palette syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 057" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-057.log" | head -n 3 || true' ERR
           node --check tests/v2-5-light-theme-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-057.log" 2>&1
           echo "PASS"
 
       - name: Run V2.5 PLUS light palette suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 058" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-058.log" | head -n 3 || true' ERR
           node tests/v2-5-light-theme-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-058.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 premium UI refinement syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 059" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-059.log" | head -n 3 || true' ERR
           node --check src/view/workspace-renderer.js > "$RUNNER_TEMP/shiftplanner-ci-059.log" 2>&1
           node --check src/staff/staff-management-renderer.js >> "$RUNNER_TEMP/shiftplanner-ci-059.log" 2>&1
           node --check tests/v2-5-ui-refinement-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-059.log" 2>&1
           echo "PASS"
 
       - name: Run V2.5 premium UI refinement suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 060" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-060.log" | head -n 3 || true' ERR
           node tests/v2-5-ui-refinement-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-060.log" 2>&1
           echo "PASS"
 
       - name: Check true integrated header test syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 061" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-061.log" | head -n 3 || true' ERR
           node --check tests/v2-5-integrated-header-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-061.log" 2>&1
           echo "PASS"
 
       - name: Run true integrated header and DB action preservation tests
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 062" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-062.log" | head -n 3 || true' ERR
           node tests/v2-5-integrated-header-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-062.log" 2>&1
           echo "PASS"
 
       - name: Check premium UI polish regression syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 063" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-063.log" | head -n 3 || true' ERR
           node --check tests/v2-5-premium-ui-polish-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-063.log" 2>&1
           echo "PASS"
 
       - name: Run premium UI polish regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 064" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-064.log" | head -n 3 || true' ERR
           node tests/v2-5-premium-ui-polish-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-064.log" 2>&1
           echo "PASS"
 
       - name: Check V2.5 Staff revalidation syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 065" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-065.log" | head -n 3 || true' ERR
           node --check src/app/week-staff-revalidation.js > "$RUNNER_TEMP/shiftplanner-ci-065.log" 2>&1
           node --check src/app/operational-session.js >> "$RUNNER_TEMP/shiftplanner-ci-065.log" 2>&1
           node --check src/app/planner-operational-app.js >> "$RUNNER_TEMP/shiftplanner-ci-065.log" 2>&1
@@ -740,20 +806,22 @@ jobs:
           echo "PASS"
 
       - name: Run V2.5 Staff revalidation regression suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 066" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-066.log" | head -n 3 || true' ERR
           node tests/v2-5-staff-revalidation-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-066.log" 2>&1
           echo "PASS"
 
       - name: Check V2.6 monthly and generation syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 067" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-067.log" | head -n 3 || true' ERR
           node --check src/app/monthly-overview.js > "$RUNNER_TEMP/shiftplanner-ci-067.log" 2>&1
           node --check src/solver/week-generator.js >> "$RUNNER_TEMP/shiftplanner-ci-067.log" 2>&1
           node --check src/app/schedule-wizard.js >> "$RUNNER_TEMP/shiftplanner-ci-067.log" 2>&1
@@ -761,20 +829,22 @@ jobs:
           echo "PASS"
 
       - name: Run V2.6 monthly and generator regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 068" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-068.log" | head -n 3 || true' ERR
           node tests/v2-6-monthly-generator-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-068.log" 2>&1
           echo "PASS"
 
       - name: Check paid-time Special events implementation syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 069" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-069.log" | head -n 3 || true' ERR
           node --check src/core/recognized-work.js > "$RUNNER_TEMP/shiftplanner-ci-069.log" 2>&1
           node --check src/core/operational-validator.js >> "$RUNNER_TEMP/shiftplanner-ci-069.log" 2>&1
           node --check src/app/monthly-overview.js >> "$RUNNER_TEMP/shiftplanner-ci-069.log" 2>&1
@@ -782,20 +852,22 @@ jobs:
           echo "PASS"
 
       - name: Run timed COURSE and Special work-minute regressions
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 070" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-070.log" | head -n 3 || true' ERR
           node tests/v2-7-special-worktime-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-070.log" 2>&1
           echo "PASS"
 
       - name: Check V2.7 overtime implementation syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 071" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-071.log" | head -n 3 || true' ERR
           node --check src/core/structural-validator.js > "$RUNNER_TEMP/shiftplanner-ci-071.log" 2>&1
           node --check src/core/operational-validator.js >> "$RUNNER_TEMP/shiftplanner-ci-071.log" 2>&1
           node --check src/core/recognized-minutes.js >> "$RUNNER_TEMP/shiftplanner-ci-071.log" 2>&1
@@ -808,20 +880,22 @@ jobs:
           echo "PASS"
 
       - name: Run V2.7 overtime end-to-end suite
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 072" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-072.log" | head -n 3 || true' ERR
           node tests/v2-7-overtime-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-072.log" 2>&1
           echo "PASS"
 
       - name: Check SPECIAL-004 overtime confirmation syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 073" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-073.log" | head -n 3 || true' ERR
           node --check src/core/operational-validator.js > "$RUNNER_TEMP/shiftplanner-ci-073.log" 2>&1
           node --check src/interaction/assignment-evaluator.js >> "$RUNNER_TEMP/shiftplanner-ci-073.log" 2>&1
           node --check src/interaction/workspace-interaction-controller.js >> "$RUNNER_TEMP/shiftplanner-ci-073.log" 2>&1
@@ -830,20 +904,22 @@ jobs:
           echo "PASS"
 
       - name: Run SPECIAL-004 combined overtime regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 074" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-074.log" | head -n 3 || true' ERR
           node tests/v2-7-special-overtime-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-074.log" 2>&1
           echo "PASS"
 
       - name: Check WORK-001 consecutive-day warning syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 075" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-075.log" | head -n 3 || true' ERR
           node --check src/core/operational-validator.js > "$RUNNER_TEMP/shiftplanner-ci-075.log" 2>&1
           node --check src/interaction/assignment-evaluator.js >> "$RUNNER_TEMP/shiftplanner-ci-075.log" 2>&1
           node --check src/interaction/workspace-interaction-controller.js >> "$RUNNER_TEMP/shiftplanner-ci-075.log" 2>&1
@@ -851,64 +927,81 @@ jobs:
           echo "PASS"
 
       - name: Run WORK-001 cross-week strong warning regressions
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 076" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-076.log" | head -n 3 || true' ERR
           node tests/v2-7-work001-warning-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-076.log" 2>&1
           echo "PASS"
 
       - name: Check persistent OFF and Special ID collision syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 077" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-077.log" | head -n 3 || true' ERR
           node --check src/app/operational-entity-id.js > "$RUNNER_TEMP/shiftplanner-ci-077.log" 2>&1
           node --check src/app/planner-operational-app.js >> "$RUNNER_TEMP/shiftplanner-ci-077.log" 2>&1
           node --check tests/v2-5-persistent-id-node-runner.js >> "$RUNNER_TEMP/shiftplanner-ci-077.log" 2>&1
           echo "PASS"
 
       - name: Run persistent status and Special ID collision regression
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 078" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-078.log" | head -n 3 || true' ERR
           node tests/v2-5-persistent-id-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-078.log" 2>&1
           echo "PASS"
 
       - name: Check direct OneDrive DB regression syntax
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 079" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-079.log" | head -n 3 || true' ERR
           node --check tests/onedrive-direct-db-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-079.log" 2>&1
           echo "PASS"
 
       - name: Verify direct OneDrive DB multi-PC reuse
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 080" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-080.log" | head -n 3 || true' ERR
           node tests/onedrive-direct-db-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-080.log" 2>&1
           echo "PASS"
 
       - name: Check whitespace errors
+        continue-on-error: true
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
+          trap 'echo "Check 081" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-081.log" | head -n 3 || true' ERR
           git diff --check > "$RUNNER_TEMP/shiftplanner-ci-081.log" 2>&1
           echo "PASS"
+
+      - name: Enforce complete suite
+        if: always()
+        shell: bash
+        run: |
+          if [ -s "$RUNNER_TEMP/shiftplanner-ci-failures" ]; then
+            echo "::error::G0 CI FAILED. One or more private checks failed:"
+            sort -u "$RUNNER_TEMP/shiftplanner-ci-failures"
+            exit 1
+          fi
+          echo "Full private canonical test suite: PASS"
 
       - name: Remove private sources and transient test logs
         if: always()
         shell: bash
         run: |
           rm -rf source
-          rm -f "$RUNNER_TEMP"/shiftplanner-ci-*.log
+          rm -f "$RUNNER_TEMP"/shiftplanner-ci-*.log "$RUNNER_TEMP"/shiftplanner-ci-failures

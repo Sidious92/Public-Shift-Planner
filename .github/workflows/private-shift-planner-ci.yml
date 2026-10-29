@@ -1009,16 +1009,17 @@ jobs:
           git diff --check > "$RUNNER_TEMP/shiftplanner-ci-081.log" 2>&1
           echo "PASS"
 
-      - name: Enforce complete suite
+      - name: Enforce all canonical checks
         if: always()
         shell: bash
         run: |
+          set -euo pipefail
           if [ -s "$RUNNER_TEMP/shiftplanner-ci-failures" ]; then
-            echo "::error::G0 CI FAILED. One or more private checks failed:"
+            echo "::error::Private canonical suite FAILED. Failing checks:"
             sort -u "$RUNNER_TEMP/shiftplanner-ci-failures"
             exit 1
           fi
-          echo "Full private canonical test suite: PASS"
+          echo "Private canonical suite: all 81 checks PASS"
 
       - name: Remove private sources and transient test logs
         if: always()

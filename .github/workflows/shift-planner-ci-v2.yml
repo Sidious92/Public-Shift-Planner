@@ -91,6 +91,83 @@ jobs:
             exit 1
           fi
 
+
+      - name: Check syntax across all source and test modules
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          while IFS= read -r -d '' file; do
+            if ! node --check "$file" > "$RUNNER_TEMP/v2-syntax.log" 2>&1; then
+              echo "::error::Syntax check failed: $file"
+              failed=$((failed+1))
+            fi
+          done < <(find src tests -type f -name '*.js' -print0)
+          if [ "$failed" -ne 0 ]; then exit 1; fi
+          echo "PASS: all source and test JavaScript syntax"
+
+      - name: Run remaining 41 canonical focused suites
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          while IFS= read -r script; do
+            if [ -z "$script" ]; then continue; fi
+            if node "$script" > "$RUNNER_TEMP/v2-focused.log" 2>&1; then
+              echo "PASS: $script"
+            else
+              echo "::error::FAIL: $script"
+              grep -Eo 'tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+' "$RUNNER_TEMP/v2-focused.log" | head -n 2 || true
+              failed=$((failed+1))
+            fi
+          done <<'CANONICAL_TESTS'
+            tests/m4-003-node-runner.js
+            tests/m4-004-node-runner.js
+            tests/v2-1-node-runner.js
+            tests/request-week-reconciler-node-runner.js
+            tests/staff-preference-evaluator-node-runner.js
+            tests/v2-2-node-runner.js
+            tests/v2-2-application-storage-node-runner.js
+            tests/operational-session-node-runner.js
+            tests/v2-3-node-runner.js
+            tests/v2-3-interaction-node-runner.js
+            tests/v2-3-week-mutation-node-runner.js
+            tests/staff-management-node-runner.js
+            tests/staff-requests-node-runner.js
+            tests/staff-requests-v3-node-runner.js
+            tests/staff-requests-v3-phase2-node-runner.js
+            tests/staff-requests-v3-recurring-node-runner.js
+            tests/staff-requests-v34-week-impact-node-runner.js
+            tests/staff-requests-v35-assist-node-runner.js
+            tests/staff-requests-v36-revocation-node-runner.js
+            tests/staff-requests-v37-audit-node-runner.js
+            tests/v2-5-ferie-off-node-runner.js
+            tests/v2-5-ferie-off-persistence-node-runner.js
+            tests/v2-5-administrative-multiweek-node-runner.js
+            tests/v2-5-administrative-illness-reversal-node-runner.js
+            tests/v2-5-revision-browser-node-runner.js
+            tests/v2-5-week-restore-node-runner.js
+            tests/v2-5-operational-print-node-runner.js
+            tests/v2-5-premium-print-node-runner.js
+            tests/v38-fullscreen-print-preview-node-runner.js
+            tests/v2-5-official-logos-node-runner.js
+            tests/v2-5-light-theme-node-runner.js
+            tests/v2-5-ui-refinement-node-runner.js
+            tests/v2-5-integrated-header-node-runner.js
+            tests/v2-5-premium-ui-polish-node-runner.js
+            tests/v2-5-staff-revalidation-node-runner.js
+            tests/v2-7-special-worktime-node-runner.js
+            tests/v2-7-overtime-node-runner.js
+            tests/v2-7-special-overtime-node-runner.js
+            tests/v2-7-work001-warning-node-runner.js
+            tests/v2-5-persistent-id-node-runner.js
+            tests/onedrive-direct-db-node-runner.js
+          CANONICAL_TESTS
+          if [ "$failed" -ne 0 ]; then exit 1; fi
+          echo "PASS: all 41 additional focused suites"
+
       - name: Remove private checkout and transient logs
         if: always()
         shell: bash

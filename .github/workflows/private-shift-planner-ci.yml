@@ -33,7 +33,7 @@ jobs:
           repository: ${{ secrets.SHIFT_PLANNER_REPO }}
           # Canonical private main
           # Canonical private main. Never check out public PR refs with secrets.
-          ref: main
+          ref: fix/pdf-header-original-logo-proportions-20261029
           token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
           persist-credentials: false
           fetch-depth: 1

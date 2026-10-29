@@ -113,7 +113,7 @@ jobs:
         run: |
           set -euo pipefail
           failed=0
-          while IFS= read -r script; do
+          while read -r script; do
             if [ -z "$script" ]; then continue; fi
             if node "$script" > "$RUNNER_TEMP/v2-focused.log" 2>&1; then
               echo "PASS: $script"

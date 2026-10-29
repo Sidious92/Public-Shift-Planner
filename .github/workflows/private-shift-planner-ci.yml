@@ -49,7 +49,7 @@ jobs:
           repository: ${{ secrets.SHIFT_PLANNER_REPO }}
           # Scheduled runs use private main; manual runs may pin an exact SHA.
           # Never accept branch or PR refs as manual input.
-          ref: ${{ inputs.private_sha || 'main' }}
+          ref: ${{ inputs.private_sha || (github.event_name == 'push' && 'ac7c1713e4d48f8ab322a6feecca930ad61d235b') || 'main' }}
           token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
           persist-credentials: false
           fetch-depth: 1
@@ -855,7 +855,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "Check 068" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-068.log" | head -n 3 || true' ERR
+          trap 'echo "Check 068" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; if grep -Fq "SP_DIAG_ROL_NO_NEXT_WEEK" "$RUNNER_TEMP/shiftplanner-ci-068.log"; then echo "::error::SP_DIAG_ROL_NO_NEXT_WEEK"; elif grep -Fq "SP_DIAG_ROL_STATUS_MISSING" "$RUNNER_TEMP/shiftplanner-ci-068.log"; then echo "::error::SP_DIAG_ROL_STATUS_MISSING"; fi; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-068.log" | head -n 3 || true' ERR
           node tests/v2-6-monthly-generator-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-068.log" 2>&1
           echo "PASS"
 

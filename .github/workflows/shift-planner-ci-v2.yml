@@ -60,6 +60,7 @@ jobs:
             echo "::error::Canonical test manifest changed: update this trusted bridge before certifying"
             exit 1
           fi
+          git diff --check
           echo "Canonical test manifest verified"
 
       - name: Run primary repository suite

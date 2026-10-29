@@ -61,8 +61,16 @@ jobs:
         run: |
           set -euo pipefail
           trap 'echo "::error::Private test failed; diagnostic output is not published from the public runner."' ERR
-          node tests/test-runner.js > "$RUNNER_TEMP/shiftplanner-ci-001.log" 2>&1
-          echo "PASS"
+          if node tests/test-runner.js > "$RUNNER_TEMP/shiftplanner-ci-001.log" 2>&1; then
+            echo "Repository suite: PASS"
+          else
+            echo "::error::Repository suite failed. Only failing test IDs are shown (no private output)."
+            awk '/^FAIL / {sub(/ - .*/, "", $0);print}' "$RUNNER_TEMP/shiftplanner-ci-001.log" | head -n 30
+            if ! grep -q '^FAIL ' "$RUNNER_TEMP/shiftplanner-ci-001.log"; then
+              echo "::error::Failure before test reporting. Full stack trace withheld."
+            fi
+            exit 1
+          fi
 
       - name: Run focused M4-003 suite
         working-directory: source

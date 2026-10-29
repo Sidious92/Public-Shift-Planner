@@ -1,0 +1,99 @@
+name: Shift Planner CI V2
+on:
+  workflow_dispatch:
+    inputs:
+      private_sha:
+        description: "Complete 40-character SHA from the private repository (blank: main)"
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths: ['.github/workflows/shift-planner-ci-v2.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shift-planner-ci-v2-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validate private commit selector
+        env:
+          PRIVATE_SHA: ${{ inputs.private_sha || '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$PRIVATE_SHA" ] && ! [[ "$PRIVATE_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "::error::The private SHA must be exactly 40 hexadecimal characters"
+            exit 1
+          fi
+
+      - name: Checkout private Shift Planner
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ secrets.SHIFT_PLANNER_REPO }}
+          ref: ${{ inputs.private_sha || 'main' }}
+          token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
+          persist-credentials: false
+          fetch-depth: 1
+          path: source
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Verify canonical suite
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f tests/test-runner.js
+          test -f .github/workflows/node-tests.yml
+          actual="$(git hash-object .github/workflows/node-tests.yml)"
+          if [ "$actual" != "819f5ee14a5270080b4f3cfa2738ea5af1d1214c" ]; then
+            echo "::error::Canonical test manifest changed: update this trusted bridge before certifying"
+            exit 1
+          fi
+          echo "Canonical test manifest verified"
+
+      - name: Run primary repository suite
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/v2-primary.log"
+          if node tests/test-runner.js > "$log" 2>&1; then
+            echo "PASS: primary repository suite"
+          else
+            echo "::error::FAIL: primary repository suite"
+            grep '^FAIL ' "$log" | sed -E 's/( - ).*//' | head -n 15 || true
+            exit 1
+          fi
+
+      - name: Run generator regression
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/v2-generator.log"
+          if node tests/v2-6-monthly-generator-node-runner.js > "$log" 2>&1; then
+            echo "PASS: generator regression"
+          else
+            echo "::error::FAIL: generator regression"
+            grep -Eo 'SP_DIAG_ROL_(NO_NEXT_WEEK|STATUS_MISSING)' "$log" | head -n 1 || true
+            grep -Eo 'tests/[A-Za-z0-9_./-]+\.js:[0-9]+:[0-9]+' "$log" | head -n 3 || true
+            exit 1
+          fi
+
+      - name: Remove private checkout and transient logs
+        if: always()
+        shell: bash
+        run: |
+          rm -rf source
+          rm -f "$RUNNER_TEMP"/v2-*.log

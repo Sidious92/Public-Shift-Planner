@@ -27,7 +27,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: ${{ secrets.SHIFT_PLANNER_REPO }}
-          ref: main
+          # Temporary trusted G0 test branch; restore main after validation.
+          ref: fix/g0-align-legacy-tests-current-contract
           token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
           persist-credentials: false
           fetch-depth: 1

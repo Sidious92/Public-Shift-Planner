@@ -1,4 +1,4 @@
-# Trusted CI bridge (refactor in progress). Public repo is ONLY a runner; source stays private.
+# Trusted CI bridge. Public workflow executes the canonical private suite with redacted diagnostics.
 # Important: never add pull_request or untrusted triggers here, as the job
 # uses a private-repository checkout token. Logs are intentionally redacted.
 name: Private Shift Planner CI
@@ -56,7 +56,7 @@ jobs:
           path: source
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
 
@@ -855,7 +855,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          trap 'echo "Check 068" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Private check failed; test output withheld."; if grep -Fq "SP_DIAG_ROL_NO_NEXT_WEEK" "$RUNNER_TEMP/shiftplanner-ci-068.log"; then echo "::error::SP_DIAG_ROL_NO_NEXT_WEEK"; elif grep -Fq "SP_DIAG_ROL_STATUS_MISSING" "$RUNNER_TEMP/shiftplanner-ci-068.log"; then echo "::error::SP_DIAG_ROL_STATUS_MISSING"; fi; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-068.log" | head -n 3 || true' ERR
+          trap 'echo "Check 068" >> "$RUNNER_TEMP/shiftplanner-ci-failures"; echo "::error::Check 068 failed: generator regression"; for kind in AssertionError TypeError ReferenceError SyntaxError; do if grep -Fq "$kind" "$RUNNER_TEMP/shiftplanner-ci-068.log"; then echo "::error::Check 068 error class: $kind"; break; fi; done; grep -Eo 'SP_DIAG_ROL_(NO_NEXT_WEEK|STATUS_MISSING)' "$RUNNER_TEMP/shiftplanner-ci-068.log" | head -n 1 || true; grep -Eo "tests/[A-Za-z0-9_./-]+\\.js:[0-9]+:[0-9]+" "$RUNNER_TEMP/shiftplanner-ci-068.log" | head -n 3 || true' ERR
           node tests/v2-6-monthly-generator-node-runner.js > "$RUNNER_TEMP/shiftplanner-ci-068.log" 2>&1
           echo "PASS"
 

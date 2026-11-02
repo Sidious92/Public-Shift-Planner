@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: ${{ secrets.SHIFT_PLANNER_REPO }}
-          ref: ${{ inputs.private_sha || (github.event_name == 'push' && 'd4cf3b80870250bfc23d57605859a352341e27fc') || 'main' }}
+          ref: ${{ inputs.private_sha || 'main' }}
           token: ${{ secrets.SHIFT_PLANNER_TOKEN }}
           persist-credentials: false
           fetch-depth: 1
